@@ -1,0 +1,2 @@
+# Smartninja
+Begginer Python Lessons
