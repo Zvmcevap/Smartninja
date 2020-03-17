@@ -18,4 +18,5 @@ elif operation == "*":
 elif operation == "/":
     print(num_one / num_two)
 
-else:print("Your math is shit")
+else:
+    print("Your math is shit")
