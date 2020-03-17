@@ -14,9 +14,9 @@ while True:
     if guess == secret:
         print(won)
         break
-    elif guess == 8:
+    elif guess == secret - 1:
         print("Warmer...warmerr... ")
-    elif guess == 6:
+    elif guess == secret + 1:
         print("So freakin CLOSE! ")
     elif guess < secret:
         print(lost + "Try a bigger number. ")
