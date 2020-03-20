@@ -22,7 +22,7 @@ def update_date():
 
 # Find files or create them
 if not path.exists("playdata.csv"):
-    with open("playdata.csv", "w") as csvfile:
+    with open("playdata.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["name", "gender", "age", "date", "game #", "score"])
 
@@ -158,7 +158,7 @@ def play_game_fun():
                     print(f"Meh {name}, took you {attempt} attempts... quite the overachiever...")
                 break
     # Now to punch in the data
-    with open("playdata.csv", "a") as csvdata:
+    with open("playdata.csv", "a", newline="") as csvdata:
         writer1 = csv.writer(csvdata)
         writer1.writerow([f"{name}", f"{gender}", f"{age}", f"{date}", f"{current_game_numb}", f"{attempt}"])
 
