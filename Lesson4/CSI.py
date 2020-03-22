@@ -1,9 +1,20 @@
 import csv
-# Vards
+import random
+from os import path
+# Vars
+population = []
 suspect_dna = ""
 criminal = {"Name": "None"}
-found_criminal = {"Name": "None"}
+found_criminals = []
+men_names = [
+    "Miha", "Matej", "Matic", "Beno", "Rok", "Dean", "Dušan", "Stojan", "Roman", "Habib", "Marjan", "Senko", "Domen"
+]
+fem_names = [
+    "Larisa", "Eva", "Mateja", "Neža", "Klara", "Hana", "Nika", "Nina", "Tina", "Pina", "Nuša", "Zala", "Katja"
+]
+
 # Dna translation
+nucleobases = "ACGT"
 Hair_color = {
     "Black": "CCAGCAATCGC",
     "Brown": "GCCAGTGCCG",
@@ -74,33 +85,89 @@ Miha = {
 suspects = [Matej, Eva, Miha, Larisa]
 
 
-# Send the data to a CSV file
-with open("crooks.csv", "w", newline="") as people:
-    fields = ["Name", "Gender", "Race", "Hair_color", "Eye_color", "Face_shape"]
-    writer = csv.DictWriter(people, fieldnames=fields)
-    writer.writeheader()
-    for person in suspects:
-        writer.writerow(person)
-# Done with crooks
+# Send the data to a CSV file for JUST IN CASE!
+def csv_list_for_looking():
+    with open("crooks.csv", "w", newline="") as people:
+        fields = ["Name", "Gender", "Race", "Hair_color", "Eye_color", "Face_shape"]
+        writer = csv.DictWriter(people, fieldnames=fields)
+        writer.writeheader()
+        for person in suspects:
+            writer.writerow(person)
 
 
-# Definitions
+# Functions for stuffs
+def populate_suspect_list(p):
+    individual = {}
+    suspicious_characters = []
+    for x in range(p):
+        individual["Gender"] = random.choice(list(dna_meta[0].keys()))
+        individual["Race"] = random.choice(list(dna_meta[1].keys()))
+        individual["Hair_color"] = random.choice(list(dna_meta[2].keys()))
+        individual["Eye_color"] = random.choice(list(dna_meta[3].keys()))
+        individual["Face_shape"] = random.choice(list(dna_meta[4].keys()))
+        if individual["Gender"] == "Male":
+            individual["Name"] = random.choice(men_names)
+            suspicious_characters.append(individual.copy())
+        else:
+            individual["Name"] = random.choice(fem_names)
+            suspicious_characters.append(individual.copy())
+    return suspicious_characters
+
+
 def print_suspects():
-    for suspect in suspects:
-        print(suspect["Name"], suspect["Gender"])
+    print("---- SUSPECTS ----")
+    for pers in suspects:
+        print(f'Name: {pers["Name"]}')
+        for k in pers:
+            if k != "Name":
+                print(f'{k}: {pers[k]}')
+        print("---- ---- ----")
 
 
 def print_a_supect(name):
+    x = 0
     for sus in suspects:
         if name == sus["Name"].lower():
+            x += 1
+            print(f'---- {x} ----')
+            print(f'Name: {sus["Name"]}')
             for s in sus:
-                print(s, sus[s])
+                if sus[s] != "Name":
+                    print(f"{s}: {sus[s]}")
+    if x != 0:
+        print(f'---- found {x} persons with the name: {name}')
 
 
 def get_suspect_dna():
-    with open("dna.txt", "r") as dnatext:
-        dna = dnatext.read()
+    if path.exists("dna.txt"):
+        with open("dna.txt", "r") as dnatext:
+            dna = dnatext.read()
+            print("\n---- SAMPLE LOADED ----")
+            print(f'---- {len(dna)} nucleobases ----')
+            return dna
+    else:
+        dna = ""
+        for feature in dna_meta:
+            for n in range(63):
+                dna += random.choice(nucleobases)
+            dna += random.choice(list(feature.values()))
+        with open("dna.txt", "w") as dnatext:
+            dnatext.write(dna)
+        print("---- DNA sample obtained ----")
+        print(f'---- {len(dna)} nucleobases ----')
         return dna
+
+
+def randomize_dna():
+    dna = ""
+    for feature in dna_meta:
+        for n in range(63):
+            dna += random.choice(nucleobases)
+        dna += random.choice(list(feature.values()))
+    with open("dna.txt", "w") as dnatext:
+        dnatext.write(dna)
+    print("---- DNA sample obtained ----")
+    print(f'---- {len(dna)} nucleobases ----')
 
 
 def analyze_dna(input_dna):
@@ -143,35 +210,30 @@ def analyze_dna(input_dna):
 
 
 def compare_data(sus, crim):
+    matches = []
     if "Gender" in crim and len(sus) > 0:
         print(f"\nDNA ANALYSIS: ")
-        quilty = {"Name": "None"}
         for suspect in sus:
             if suspect["Gender"] == crim["Gender"] and suspect["Race"] == crim["Race"] and \
                     (suspect["Hair_color"] == crim["Hair_color"] and suspect["Eye_color"] == crim["Eye_color"] and
                      (suspect["Face_shape"] == crim["Face_shape"])):
                 print(f'{suspect["Name"]} ---- DNA MATCH FOUND!')
-                quilty = suspect
+                matches.append(suspect.copy())
             else:
                 print(f"{suspect['Name']} ---- NOT A MATCH!")
         print(f"\nRESULT: ")
-        print(f'\nCONFIRMED MATCH: {quilty["Name"]}')
-        if quilty["Name"] != "None":
-            print("---- MATCH FOUND ----\n")
-            for q in quilty:
-                if q == "Name":
-                    print(f'{q}: {quilty[q]}')
-                else:
-                    print(f'{q}: {quilty[q]} ---- 100% MATCH')
-            return quilty
+        if len(matches) > 0:
+            for m in matches:
+                print(f'CONFIRMED MATCH: {m["Name"]}')
         else:
-            pan = {"Name": "None"}
             print("---- NO MATCH ----")
-            return pan
     else:
         print("---- NO DATA TO COMPARE ----")
-        cake = {"Name": "None"}
-        return cake
+    if len(matches) == 0 or len(matches) > 1:
+        print(f'Analysis complete: found {len(matches)} matches!')
+    else:
+        print(f'Analysis complete: found {len(matches)} match!')
+    return matches
 
 
 cop_name = input("Name: ")
@@ -180,24 +242,43 @@ print(f'\nLogged in:\n{cop_name}\nBN: {cop_badge}')
 
 while True:
     print("\n---- COMMANDS ----")
-    print("ls= load dna sample, as= analyze dna sample, ps= print suspects, fm= find dna match")
-    print("type suspects name to see their profile, g= guilty profile, x= exit program")
+    print("ls= load dna sample, as= analyze dna sample, fm= find dna match, m= dna matches")
+    print("ps= print suspects, pop= populate suspect list, ran= randomise dna")
+    print("type suspects name to see their profile, x= exit program: ")
     command = input("Command: ").lower()
     if command == "ls":
         suspect_dna = get_suspect_dna()
     elif command == "as":
         criminal = analyze_dna(suspect_dna)
     elif command == "fm":
-        found_criminal = compare_data(suspects, criminal)
+        found_criminals = compare_data(suspects, criminal)
     elif command == "ps":
         print_suspects()
     elif command == "x":
         break
-    elif command == "g":
-        if found_criminal["Name"] != "None":
-            for c in found_criminal:
-                print(c, found_criminal[c])
+    elif command == "m":
+        if len(found_criminals) > 0:
+            for fc in found_criminals:
+                for c in fc:
+                    print(c, fc[c])
         else:
-            print("---- NO CRIMINAL FOUND ----")
+            print("---- NO MATCHES FOUND ----")
+    elif command == "ran":
+        randomize_dna()
+        suspect_dna = get_suspect_dna()
+    elif command == "pop":
+        while True:
+            broj = ""
+            numb = input("How many suspects have you found: ")
+            for d in numb:
+                if d.isdigit():
+                    broj += d
+            if broj != "":
+                broj = int(broj)
+                suspects = populate_suspect_list(broj)
+                csv_list_for_looking()
+                break
+            else:
+                print("---- Not a valid number ----")
     else:
         print_a_supect(command)
