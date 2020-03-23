@@ -97,7 +97,8 @@ def last_player():
         else:
             print("No player recorder, please log in.")
             print("")
-            player_description_update(player_info)
+            player = {"name": "", "gender": "", "prefix": "", "age": 1, "date": [], "play#": [], "score": []}
+            return player
 
 
 # Scoreboard functions and stuffs
@@ -214,6 +215,8 @@ print("WELCOME TO GUESS THE SECRET NUMBER!")
 print("")
 print(f"The current highscore is {best_score}! Good luck!!!")
 player_info = last_player()
+if player_info["name"] == "":
+    player_description_update(player_info)
 
 
 while True:
