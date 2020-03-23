@@ -1,7 +1,8 @@
 import csv
 import random
-from os import path
+
 # Vars
+suspects = []
 population = []
 suspect_dna = ""
 criminal = {"Name": "None"}
@@ -44,45 +45,7 @@ Race = {
     "Asian": "CGCGGGCCG"
 }
 dna_meta = [Gender, Race, Hair_color, Eye_color, Facial_shape]
-
-# The peoples
-Eva = {
-    "Name": "Eva",
-    "Gender": "Female",
-    "Race": "White",
-    "Hair_color": "Blonde",
-    "Eye_color": "Blue",
-    "Face_shape": "Oval"
-}
-
-Larisa = {
-    "Name": "Larisa",
-    "Gender": "Female",
-    "Race": "White",
-    "Hair_color": "Brown",
-    "Eye_color": "Brown",
-    "Face_shape": "Oval"
-}
-
-Matej = {
-    "Name": "Matej",
-    "Gender": "Male",
-    "Race": "White",
-    "Hair_color": "Black",
-    "Eye_color": "Blue",
-    "Face_shape": "Oval"
-}
-
-Miha = {
-    "Name": "Miha",
-    "Gender": "Male",
-    "Race": "White",
-    "Hair_color": "Brown",
-    "Eye_color": "Green",
-    "Face_shape": "Square"
-}
-
-suspects = [Matej, Eva, Miha, Larisa]
+# End DNA hows and dos
 
 
 # Send the data to a CSV file for JUST IN CASE!
@@ -135,30 +98,11 @@ def print_a_supect(name):
                 if sus[s] != "Name":
                     print(f"{s}: {sus[s]}")
     if x != 0:
-        print(f'---- found {x} persons with the name: {name}')
+        name = name.capitalize()
+        print(f'---- found {x} persons with the name: {name} ----')
 
 
 def get_suspect_dna():
-    if path.exists("dna.txt"):
-        with open("dna.txt", "r") as dnatext:
-            dna = dnatext.read()
-            print("\n---- SAMPLE LOADED ----")
-            print(f'---- {len(dna)} nucleobases ----')
-            return dna
-    else:
-        dna = ""
-        for feature in dna_meta:
-            for n in range(63):
-                dna += random.choice(nucleobases)
-            dna += random.choice(list(feature.values()))
-        with open("dna.txt", "w") as dnatext:
-            dnatext.write(dna)
-        print("---- DNA sample obtained ----")
-        print(f'---- {len(dna)} nucleobases ----')
-        return dna
-
-
-def randomize_dna():
     dna = ""
     for feature in dna_meta:
         for n in range(63):
@@ -166,8 +110,10 @@ def randomize_dna():
         dna += random.choice(list(feature.values()))
     with open("dna.txt", "w") as dnatext:
         dnatext.write(dna)
-    print("---- DNA sample obtained ----")
+    print("\n---- DNA SAMPLE OBTAINED ----")
     print(f'---- {len(dna)} nucleobases ----')
+    print("---- SAMPLE LOADED ----")
+    return dna
 
 
 def analyze_dna(input_dna):
@@ -227,8 +173,12 @@ def compare_data(sus, crim):
                 print(f'CONFIRMED MATCH: {m["Name"]}')
         else:
             print("---- NO MATCH ----")
-    else:
-        print("---- NO DATA TO COMPARE ----")
+    if len(sus) == 0:
+        print("\n---- NO SUSPECTS IN DATABASE ----")
+        print("---- ENTER SUSPECT LIST ----")
+    if "Gender" not in crim:
+        print("\n---- NO DNA COMPARISON ----")
+        print("---- ANALYZE DNA SAMPLE ----")
     if len(matches) == 0 or len(matches) > 1:
         print(f'Analysis complete: found {len(matches)} matches!')
     else:
@@ -241,12 +191,23 @@ cop_badge = input("Badge number: ")
 print(f'\nLogged in:\n{cop_name}\nBN: {cop_badge}')
 
 while True:
+    print("")
+    if suspect_dna == "":
+        print(f'DNA SAMPLE: N/A')
+    else:
+        print(f'DNA SAMPLE: Ready')
+    if "Gender" not in criminal:
+        print(f'DNA ANALYSIS: N/A')
+    else:
+        print(f'DNA ANALYSIS: Complete')
+    print(f'Suspects: {len(suspects)}')
     print("\n---- COMMANDS ----")
     print("ls= load dna sample, as= analyze dna sample, fm= find dna match, m= dna matches")
-    print("ps= print suspects, pop= populate suspect list, ran= randomise dna")
+    print("ps= print suspects, pop= populate suspect list")
     print("type suspects name to see their profile, x= exit program: ")
     command = input("Command: ").lower()
     if command == "ls":
+        criminal = {"Name": "None"}
         suspect_dna = get_suspect_dna()
     elif command == "as":
         criminal = analyze_dna(suspect_dna)
@@ -258,14 +219,15 @@ while True:
         break
     elif command == "m":
         if len(found_criminals) > 0:
-            for fc in found_criminals:
-                for c in fc:
-                    print(c, fc[c])
+            print("---- MATCHES ----")
+            for tits in found_criminals:
+                print(f'Name: {tits["Name"]}')
+                for t in tits:
+                    if t != "Name":
+                        print(f'{t}: {tits[t]}')
+                print("---- ---- ----")
         else:
-            print("---- NO MATCHES FOUND ----")
-    elif command == "ran":
-        randomize_dna()
-        suspect_dna = get_suspect_dna()
+            print("---- NO MATCHES IN DATABASE ----")
     elif command == "pop":
         while True:
             broj = ""
