@@ -60,20 +60,20 @@ def csv_list_for_looking():
 
 # Functions for stuffs
 def populate_suspect_list(p):
-    individual = {}
+
     suspicious_characters = []
     for x in range(p):
-        individual["Gender"] = random.choice(list(dna_meta[0].keys()))
-        individual["Race"] = random.choice(list(dna_meta[1].keys()))
-        individual["Hair_color"] = random.choice(list(dna_meta[2].keys()))
-        individual["Eye_color"] = random.choice(list(dna_meta[3].keys()))
-        individual["Face_shape"] = random.choice(list(dna_meta[4].keys()))
+        individual = {"Gender": random.choice(list(dna_meta[0].keys())),
+                      "Race": random.choice(list(dna_meta[1].keys())),
+                      "Hair_color": random.choice(list(dna_meta[2].keys())),
+                      "Eye_color": random.choice(list(dna_meta[3].keys())),
+                      "Face_shape": random.choice(list(dna_meta[4].keys()))}
         if individual["Gender"] == "Male":
             individual["Name"] = random.choice(men_names)
-            suspicious_characters.append(individual.copy())
+            suspicious_characters.append(individual)
         else:
             individual["Name"] = random.choice(fem_names)
-            suspicious_characters.append(individual.copy())
+            suspicious_characters.append(individual)
     return suspicious_characters
 
 
