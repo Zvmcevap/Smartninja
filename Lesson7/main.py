@@ -26,7 +26,5 @@ data2 = json.loads(response2)
 
 print("Data 1: ", type(data1), data1)
 print("Data 2: ", type(data2), data2)
-
 print("\n----------------------\n")
-
 print(data1["name"], data1["weather"][0]["description"])
