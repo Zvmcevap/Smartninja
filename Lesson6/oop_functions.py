@@ -1,6 +1,5 @@
 import json
 
-
 # Classes
 class Player:
     def __init__(self, first_name, last_name, height_cm, weight_kg):
@@ -12,6 +11,10 @@ class Player:
     def weight_to_lbs(self):
         pounds = self.weight_kg * 2.20462262
         return pounds
+
+    def cm_to_meter(self):
+        height_m = self.height_cm / 100
+        return height_m
 
 
 class BasketballPlayer(Player):
