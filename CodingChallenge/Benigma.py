@@ -11,31 +11,6 @@ pun.append(" ")
 symbols = [lower, upper, numb, pun]
 
 
-def complicate(wrd, sft):
-    solution = ""
-    for letter in wrd:
-        for x in symbols:
-            if letter in x:
-                fpos = x.index(letter)
-                newpos = fpos + sft
-                if newpos > len(x):
-                    newpos -= len(x)
-                solution += x[newpos]
-    return solution
-
-
-def decomplicate(sol, sft):
-    dec = ""
-    for letter in sol:
-        for x in symbols:
-            if letter in x:
-                fpos = x.index(letter)
-                newpos = fpos - sft
-                if newpos < 0:
-                    newpos += len(x)
-                dec += x[newpos]
-
-
 class Gui:
     # Masta window and variables
     def __init__(self, master, sym):
@@ -119,7 +94,7 @@ class Gui:
         self.inputtxtsol.delete(1.0, tk.END)
         self.inputtxtsol.insert(tk.END, self.enctext)
 
-    def decode(self, event=None):
+    def decode(self):
         self.shift = self.scale.get()
         self.orgtext = ""
         self.enctext = self.inputtxtsol.get(1.0, tk.END)
