@@ -28,8 +28,8 @@ class Gui:
         self.frame_top = tk.Frame(self.master)
         self.frame_top.pack(fill=tk.BOTH, side=tk.TOP)
         self.frame_but = tk.Frame(self.master)
-        self.frame_org = tk.LabelFrame(self.master, text="Original message.", bg="grey")
-        self.frame_sol = tk.LabelFrame(self.master, text="Coded message.", bg="red")
+        self.frame_org = tk.LabelFrame(self.master, text="Original message", bg="grey")
+        self.frame_sol = tk.LabelFrame(self.master, text="Coded message", bg="red")
 
         self.frame_top.pack(side=tk.TOP)
         self.frame_org.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH, padx=50, pady=40)
