@@ -16,8 +16,9 @@ class Gui:
     def __init__(self, master, sym):
         self.orgtext = ""
         self.enctext = ""
-        self.shift = 0
+        self.shift = tk.IntVar
         self.symbols = sym
+        self.checkvar = tk.IntVar(value=1)
 
         self.master = master
         self.master.geometry("1000x700")
@@ -40,9 +41,11 @@ class Gui:
         self.scale = tk.Scale(
             self.scale_frame,
             orient=tk.HORIZONTAL,
+            length=152,
             from_=0,
             to_=25,
-            variable=tk.IntVar
+            variable=self.shift,
+            command=lambda x: self.get_shift()
         )
         self.scale_frame.grid(row=2)
         self.scale.pack()
@@ -68,16 +71,31 @@ class Gui:
                                  fg="red",
                                  command=lambda: self.encode()
                                  )
-        self.butdecode = tk.Button(self.frame_but,
-                                   text="Decode the message\n<-------",
-                                   command=lambda: self.decode()
-                                   )
+        self.checkbox = tk.Checkbutton(
+            self.frame_but,
+            text="Benigma",
+            variable=self.checkvar,
+            pady=20,
+            command=lambda: self.update_check()
+        )
         self.butcode.grid(row=0)
-        self.butdecode.grid(row=1)
+        self.checkbox.grid(row=1)
 
     # Fun in functions
+    def update_check(self):
+        if self.checkvar.get() == 1:
+            self.checkbox.configure(text="Benigma")
+            self.butcode.configure(text="Encode the message\n------->", fg="red", command=lambda: self.encode())
+        else:
+            self.butcode.configure(text="Decode the message\n<------", fg="black", command=lambda: self.decode())
+            self.checkbox.configure(text="Buring")
+
     def get_shift(self):
         self.shift = self.scale.get()
+        if self.checkvar.get() == 1:
+            self.encode()
+        else:
+            self.decode()
 
     def encode(self):
         self.shift = self.scale.get()
