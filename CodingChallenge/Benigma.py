@@ -14,16 +14,20 @@ symbols = [lower, upper, numb, pun]
 class Gui:
     # Masta window and variables
     def __init__(self, master, sym):
+        self.master = master
+        # Center le screen
+        screen_w, screen_h = master.winfo_screenwidth(), master.winfo_screenheight()
+        w, h = 1000, 700
+        pos_x, pos_y = (screen_w//2) - (w//2), (screen_h//2) - (h//2)
+        self.master.geometry("%dx%d+%d+%d" % (w, h, pos_x, pos_y))
+        self.master.title("Benigma und Buring Maschine")
+        self.symbols = sym
+
         self.orgtext = ""
         self.enctext = ""
-        self.shift = tk.IntVar
-        self.symbols = sym
+        self.shift = tk.IntVar()
+
         self.checkvar = tk.IntVar(value=1)
-
-        self.master = master
-        self.master.geometry("1000x700")
-        self.master.title("Benigma und Buring Maschine")
-
         # Frames
         self.frame_top = tk.Frame(self.master)
         self.frame_top.pack(fill=tk.BOTH, side=tk.TOP)
@@ -45,20 +49,21 @@ class Gui:
             from_=0,
             to_=25,
             variable=self.shift,
-            command=lambda x: self.get_shift()
+            command=lambda x: self.encode()
         )
         self.scale_frame.grid(row=2)
         self.scale.pack()
 
         # Text boxes
         self.naslov = tk.Label(
-                               self.frame_top,
-                               text="Benos Enigma and Turing Machine!",
-                               font=("", 20),
-                               pady=20,
-                               padx=10
-                               )
+               self.frame_top,
+               text="Benos Enigma and Turing Machine!",
+               font=("", 20),
+               pady=20,
+               padx=10,
+               )
         self.naslov.pack()
+
         self.inputtxtorg = tk.Text(self.frame_org, width=20, height=20)
         self.inputtxtorg.pack(expand=tk.TRUE, fill=tk.BOTH)
         self.inputtxtsol = tk.Text(self.frame_sol, width=20, height=20)
@@ -66,17 +71,20 @@ class Gui:
 
         # Buttons
         self.butcode = tk.Button(
-                                 self.frame_but,
-                                 text="Encode the message\n------->",
-                                 fg="red",
-                                 command=lambda: self.encode()
-                                 )
+             self.frame_but,
+             text="Encode the message\n------->",
+             fg="red",
+             command=lambda: self.encode(),
+             width=20
+             )
         self.checkbox = tk.Checkbutton(
             self.frame_but,
             text="Benigma",
             variable=self.checkvar,
             pady=20,
-            command=lambda: self.update_check()
+            command=lambda: self.update_check(),
+            width=8,
+            anchor="w"
         )
         self.butcode.grid(row=0)
         self.checkbox.grid(row=1)
@@ -85,47 +93,41 @@ class Gui:
     def update_check(self):
         if self.checkvar.get() == 1:
             self.checkbox.configure(text="Benigma")
-            self.butcode.configure(text="Encode the message\n------->", fg="red", command=lambda: self.encode())
+            self.butcode.configure(text="Encode the message\n------->", fg="red")
         else:
-            self.butcode.configure(text="Decode the message\n<------", fg="black", command=lambda: self.decode())
+            self.butcode.configure(text="Decode the message\n<------", fg="black")
             self.checkbox.configure(text="Buring")
 
-    def get_shift(self):
-        self.shift = self.scale.get()
-        if self.checkvar.get() == 1:
-            self.encode()
-        else:
-            self.decode()
-
     def encode(self):
-        self.shift = self.scale.get()
-        self.enctext = ""
-        self.orgtext = self.inputtxtorg.get(1.0, tk.END)
-        for letter in self.orgtext:
-            for s in self.symbols:
-                if letter in s:
-                    fpos = s.index(letter)
-                    newpos = fpos + self.shift
-                    while newpos >= len(s):
-                        newpos -= len(s)
-                    self.enctext += s[newpos]
-        self.inputtxtsol.delete(1.0, tk.END)
-        self.inputtxtsol.insert(tk.END, self.enctext)
+        benigma = self.checkvar.get()
+        shift = self.shift.get()
+        if benigma:
+            text = self.inputtxtorg.get(1.0, tk.END)
+            self.enctext = ""
+        else:
+            text = self.inputtxtsol.get(1.0, tk.END)
+            self.orgtext = ""
+            shift = -shift
 
-    def decode(self):
-        self.shift = self.scale.get()
-        self.orgtext = ""
-        self.enctext = self.inputtxtsol.get(1.0, tk.END)
-        for letter in self.enctext:
+        for letter in text:
             for s in self.symbols:
                 if letter in s:
                     fpos = s.index(letter)
-                    newpos = fpos - self.shift
-                    while newpos < 0:
-                        newpos += len(s)
-                    self.orgtext += s[newpos]
-        self.inputtxtorg.delete(1.0, tk.END)
-        self.inputtxtorg.insert(tk.END, self.orgtext)
+                    newpos = fpos + shift
+                    if benigma:
+                        while newpos >= len(s):
+                            newpos -= len(s)
+                        self.enctext += s[newpos]
+                    else:
+                        while newpos < 0:
+                            newpos += len(s)
+                        self.orgtext += s[newpos]
+        if benigma:
+            self.inputtxtsol.delete(1.0, tk.END)
+            self.inputtxtsol.insert(tk.END, self.enctext)
+        else:
+            self.inputtxtorg.delete(1.0, tk.END)
+            self.inputtxtorg.insert(tk.END, self.orgtext)
 
 
 def main():
