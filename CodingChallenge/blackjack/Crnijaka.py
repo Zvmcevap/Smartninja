@@ -6,6 +6,7 @@ import random
 
 deck = []
 card_images = []
+card_backs = []
 name = ""
 value = ""
 colour = ""
@@ -14,6 +15,10 @@ for file in glob.glob("cardjpegs/*.jpg"):
     pic = Image.open(file)
     pic_name = file[10:-4]
     card_images.append({pic_name: pic})
+
+for file in glob.glob("*.jpg"):
+    pic = Image.open(file)
+    card_backs.append(pic)
 
 
 class Card:
@@ -59,6 +64,7 @@ for x in deck:
     print(f"{x.name} of {x.colour} with a value of {x.value}")
 
 print(len(deck))
+print(len(card_backs))
 
 
 class Gui:
