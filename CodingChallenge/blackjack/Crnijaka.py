@@ -13,15 +13,15 @@ colour = ""
 for file in glob.glob("cardjpegs/*.jpg"):
     pic = Image.open(file)
     pic_name = file[10:-4]
-    card_images.append({pic_name:pic})
+    card_images.append({pic_name: pic})
 
 
 class Card:
-    def __init__(self, picture, colour, name, value):
-        self.colour = colour
-        self.name = name
-        self.picture = picture
-        self.value = value
+    def __init__(self, pctr, clr, nm, vl):
+        self.colour = clr
+        self.name = nm
+        self.picture = pctr
+        self.value = vl
 
 
 for c in card_images:
@@ -36,7 +36,7 @@ for c in card_images:
         elif "C" in x:
             colour = "Clubs"
 
-        if int(x[:-1]) < 11 and int(x[:-1]) > 1:
+        if 11 > int(x[:-1]) > 1:
             name = x[:-1]
             value = int(name)
         elif int(x[:-1]) == 1:
@@ -72,13 +72,11 @@ class Gui:
         self.label = tk.Label(self.frame)
 
 
-
-
 def main():
     root = tk.Tk()
     Gui(root)
     root.mainloop()
 
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    main()
