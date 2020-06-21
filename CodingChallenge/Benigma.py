@@ -26,7 +26,8 @@ class Gui:
         self.orgtext = ""
         self.enctext = ""
         self.shift = tk.IntVar()
-
+        self.abc_frames = []
+        self.sabc_frames = []
         self.checkvar = tk.IntVar(value=1)
         # Frames
         self.frame_top = tk.Frame(self.master)
@@ -34,11 +35,14 @@ class Gui:
         self.frame_but = tk.Frame(self.master)
         self.frame_org = tk.LabelFrame(self.master, text="Original message", bg="grey")
         self.frame_sol = tk.LabelFrame(self.master, text="Coded message", bg="red")
+        self.frame_abc = tk.LabelFrame(self.frame_top, text="Alphabet")
 
         self.frame_top.pack(side=tk.TOP)
         self.frame_org.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH, padx=50, pady=40)
         self.frame_but.pack(side=tk.LEFT)
         self.frame_sol.pack(side=tk.RIGHT, expand=tk.TRUE, fill=tk.BOTH, padx=50, pady=40)
+        self.frame_abc.pack(side=tk.BOTTOM, expand=tk.TRUE)
+        self.make_alphabet()
 
         # Shift scale
         self.scale_frame = tk.LabelFrame(self.frame_but, text="Set shift level", bg="grey")
@@ -54,7 +58,7 @@ class Gui:
         self.scale_frame.grid(row=2)
         self.scale.pack()
 
-        # Text boxes
+        # Tkinter meat and potatoes
         self.naslov = tk.Label(
                self.frame_top,
                text="Benos Enigma and Turing Machine!",
@@ -62,6 +66,7 @@ class Gui:
                pady=20,
                padx=10,
                )
+
         self.naslov.pack()
 
         self.inputtxtorg = tk.Text(self.frame_org, width=20, height=20)
@@ -90,6 +95,19 @@ class Gui:
         self.checkbox.grid(row=1)
 
     # Fun in functions
+
+    # Alphabet
+    def make_alphabet(self):
+        for broj, cap in enumerate(self.symbols[1]):
+            abc_label = tk.Label(self.frame_abc, text=cap)
+            self.abc_frames.append(abc_label)
+            abc_label.grid(row=0, column=broj)
+            arrow_label1 = tk.Label(self.frame_abc, text="|")
+            arrow_label1.grid(row=1, column=broj)
+            sabc_label = tk.Label(self.frame_abc, text=cap, fg="red")
+            self.sabc_frames.append(sabc_label)
+            sabc_label.grid(row=3, column=broj)
+
     def update_check(self):
         if self.checkvar.get() == 1:
             self.checkbox.configure(text="Benigma")
@@ -101,6 +119,7 @@ class Gui:
     def encode(self):
         benigma = self.checkvar.get()
         shift = self.shift.get()
+        caps = self.symbols[1]
         if benigma:
             text = self.inputtxtorg.get(1.0, tk.END)
             self.enctext = ""
@@ -125,9 +144,23 @@ class Gui:
         if benigma:
             self.inputtxtsol.delete(1.0, tk.END)
             self.inputtxtsol.insert(tk.END, self.enctext)
+            still_abc = self.abc_frames
+            moved_abc = self.sabc_frames
+
         else:
             self.inputtxtorg.delete(1.0, tk.END)
             self.inputtxtorg.insert(tk.END, self.orgtext)
+            still_abc = self.sabc_frames
+            moved_abc = self.abc_frames
+            # Alphabet update
+        for position, lbl in enumerate(still_abc):
+            lbl.configure(text=caps[position])
+        for lbl in moved_abc:
+            lbl_pos = moved_abc.index(lbl)
+            change_pos = lbl_pos + shift
+            while change_pos >= len(moved_abc):
+                change_pos -= len(moved_abc)
+            lbl.configure(text=caps[change_pos])
 
 
 def main():
